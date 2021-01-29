@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>props 的使用</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/prop-types/15.7.1/prop-types.js"></script>
+
+    <!-- 如果使用 JSX 语法 type="text/babel" -->
+    <script type="text/babel">
+      class Person extends React.Component {
+        static propTypes = {
+          name: PropTypes.string.isRequired, // 类型是否必填
+          age: PropTypes.number,
+        };
+        static defaultProps = {
+          name: "无名",
+          age: 30,
+        };
+
+        render() {
+          return (
+            <ul>
+              {/* this.props 接收组件定义的属性 */}
+              <li> {this.props.name} </li>
+              <li> {this.props.age} </li>
+            </ul>
+          );
+        }
+      }
+
+      // 属性限制，应写在类中的静态属性里面
+      //   Person.propTypes = {
+      //     name: React.PropTypes.string // React 15.5 弃用，并分离出 prop-types.js
+      //     name: PropTypes.string.isRequired, // 类型是否必填
+      //     age: PropTypes.number,
+      //   };
+
+      // 默认值
+      //   Person.defaultProps = {
+      //     name: "无名",
+      //     age: 30,
+      //   };
+
+      const person2 = { name: "gohan", age: 15 };
+
+      ReactDOM.render(
+        <div>
+          <Person name="goku" age={20} />
+          {/* 组件上可以使用延展符将对象展开作为组件属性 */}
+          {console.log(...person2) /* 但无法直接输出 */}
+          <Person {...person2} />
+        </div>,
+        document.querySelector("#root")
+      );
+    </script>
+  </body>
+</html>

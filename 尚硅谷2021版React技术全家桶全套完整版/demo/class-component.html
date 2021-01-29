@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>类式组件 改变 this 指向</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script type="text/babel">
+      class Demo extends React.Component {
+        constructor() {
+          super();
+
+          this.state = {
+            switch: false,
+          };
+
+          // 创建实例的时候，寻找类的原型里的方法并重新绑定 this 并返回一个新的函数
+          this.bindSwitchState = this.protoSwitchState.bind(this);
+        }
+
+        // 类中定义的方法，绑在类的原型上，如果直接绑定元素事件上会出现 this 指向为 undefined(因类方法局部开启了严格模式，所以不是 window)
+        protoSwitchState() {
+          console.log(this);
+          // 状态需要使用 setState 进行更改
+          this.setState({
+            switch: !this.state.switch,
+          });
+        }
+
+        // 实例方法，赋值箭头函数中的 this 指向外层函数的 this
+        arrowSwitchState = () => {
+          console.log(this); // 实例对象
+          // 状态需要使用 setState 进行更改
+          this.setState({
+            switch: !this.state.switch,
+          });
+        };
+
+        render() {
+          return (
+            <div>
+              状态切换：{this.state.switch ? "开" : "关"}
+              <br />
+              {/* 
+                // 这样将类方法绑定事件属性，等于直接调用类方法，而不是实例调用类方法，里面的 this 指向会是 undefined
+                <button onClick={this.protoSwitchState}>bind 改变指向</button>
+              */}
+              <button onClick={this.bindSwitchState}>bind 改变指向</button>
+              <button onClick={this.arrowSwitchState}>箭头函数 改变指向</button>
+            </div>
+          );
+        }
+      }
+
+      // 类式组件，new 该类实例，调用 render 方法将返回的虚拟 DOM 转为真实 DOM，然后渲染到页面
+      ReactDOM.render(<Demo />, document.querySelector("#root"));
+    </script>
+  </body>
+</html>

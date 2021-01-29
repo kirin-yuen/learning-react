@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>函数式组件</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script type="text/babel">
+      function Demo() {
+        console.log(this); // 不是 window, 而是 undefined, 因 babel 转换后会变成严格模式，严格模式下函数的 this 指向 undefined
+        return <h1>函数式组件</h1>;
+      }
+
+      // 函数式组件，调用改函数，将返回的虚拟 DOM 转为真实 DOM，然后渲染到页面
+      ReactDOM.render(<Demo />, document.querySelector("#root"));
+    </script>
+  </body>
+</html>

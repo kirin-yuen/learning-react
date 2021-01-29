@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第一个 React 应用</title>
+    <style>
+      .box {
+        color: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="jsx-version"></div>
+    <div id="js-version"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <!-- 如果使用 JSX 语法 type="text/babel" -->
+    <script type="text/babel">
+      // JSX 实际就是 React.createElement 的语法糖
+      const vDOM1 = <h1 className="box">Hello React —— JSX 版本</h1>;
+      ReactDOM.render(vDOM1, document.querySelector("#jsx-version"));
+    </script>
+    <!-- 纯 JS 实现 -->
+    <script>
+      // 虚拟 DOM
+      const vDOM2 = React.createElement(
+        "h1",
+        { className: "box" },
+        "Hello React —— 纯 JS 版本"
+      );
+      ReactDOM.render(vDOM2, document.querySelector("#js-version"));
+    </script>
+  </body>
+</html>
