@@ -259,3 +259,159 @@ ReactDOM.render(<Demo />, document.querySelector("#root"));
   ```
 
   
+
+#### 属性 props
+
+* **类式组件属性**
+
+  * 组件上类似 html 标签属性方式声明
+
+  ```jsx
+  <Person name="goku" age={20} />
+  ```
+
+  * 读取属性 `this.props`
+
+  ```jsx
+  render() {
+    return (
+      <ul>
+        {/* this.props 接收组件定义的属性 */}
+        <li> {this.props.name} </li>
+        <li> {this.props.age} </li>
+      </ul>
+    );
+  }
+  ```
+
+  * 对 props 值进行**类型限制**与**必要性限制**
+
+  1. react 15.5 后已废弃，类型限制写在 react 里
+
+     ```打jsx
+     Person.propTypes = {
+       name: React.PropTypes.string // React 15.5 弃用，并分离出 prop-types.js
+     };f
+     ```
+
+  2. 引入单独处理类型限制的库 **prop-types.js**
+
+     ```jsx
+     Person.propTypes = {
+       name: PropTypes.string.isRequired, // 类型是否必填
+       age: PropTypes.number,
+     };
+     ```
+
+  * 默认属性值
+
+  ```jsx
+  Person.defaultProps = {
+    name: "无名",
+    age: 30,
+  };
+  ```
+
+  > 属性值和类型限制，可以通过 `static` 静态属性的方式写在类里面
+
+  ```jsx
+  // 使用静态属性，绑定 propTypes 和 defaultProps
+  static propTypes = {
+    name: PropTypes.string.isRequired, // 类型是否必填
+    age: PropTypes.number,
+  };
+  static defaultProps = {
+    name: "无名",
+    age: 30,
+  };
+  ```
+
+  
+
+  * 通过延展符将对象所有属性传递给 props
+
+  ```jsx
+  const person2 = { name: "gohan", age: 15 };
+  
+  <Person {...person2} />
+  // 等价于
+  <Person name="gohan" age=“15” />
+  ```
+
+  * 组件类的构造函数
+
+  ```jsx
+  constructor(props){
+    super(props); // 如果不传递 props 给 super，构造器中的 this.props 无法使用
+  }
+  ```
+
+* **函数式组件属性**
+
+  函数式组件也可使用属性
+
+  ```jsx
+  function Person(props){
+      return <div>{props.name}</div>
+  }
+  ```
+
+
+
+#### ref
+
+* **字符串形式 ref**(因为效率不高，所以还是建议**不再使用**)
+
+  ```jsx
+  { /* 字符串式 ref，不推荐使用 */ }
+  <input placeholder="字符串式 ref，不推荐使用" ref="strRef" type="text" onChange={()=>{console.log('字符串式 ref，不推荐使用',this.refs.strRef.value);}} />
+  ```
+  
+* **回调函数形式 ref**
+
+  回调函数：
+
+  	* 你定义的函数
+  	* 你没调用，被被人调用
+
+  * 字符串式 ref，不推荐使用
+  
+    ```jsx
+  <input placeholder="字符串式 ref，不推荐使用" ref="strRef" type="text" onChange={()=>{console.log('字符串式 ref，不推荐使用',this.refs.strRef.value);}} />
+    ```
+  
+  * 回调式 ref，**内联函数**
+  
+    ```jsx
+    { /* 内联函数 */ }
+    <input placeholder="回调式 ref，内联函数" ref={(node)=>{
+        // 内联式函数会在更新时(setState 后再次 render 的时候运行两次，第一次 node === null，第二次有值)
+        this.cbInlineNode = node;
+        console.log('回调式 ref，内联函数', this.cbInlineNode);
+    }} type="text" />
+    ```
+  
+  * 回调式 ref，**绑定函数**
+  
+    ```jsx
+    bindingFunc = (node) => {
+      this.bindingFuncNode = node;
+      console.log('回调式 ref，绑定函数',this.bindingFuncNode);
+    }
+    
+    { /* 绑定函数 */ }
+    <input placeholder="回调式 ref，绑定函数" ref={this.bindingFunc} type="text" onChange={() => {
+        console.log(this.bindingFuncNode.value);
+    }} />
+    ```
+  
+* createRef
+
+  ```jsx
+  myRef = React.createRef();
+  
+  { /* React.createRef 返回一个容器，单独收集某一个元素，如果重复使用，则会后者居上 */ }
+  <input placeholder="回调式 ref，绑定函数" ref={this.myRef} type="text" />
+  ```
+
+  
