@@ -415,3 +415,129 @@ ReactDOM.render(<Demo />, document.querySelector("#root"));
   ```
 
   
+
+#### 事件
+
+* React 事件格式为 onXxx
+  * 为了兼容性
+  * 为了高效
+* 可在事件里获得事件源，避免过度使用 ref
+
+```jsx
+return (
+    <div>
+      {/* React 事件为原生 html 元素重写了事件，格式为 onXxx
+            1. 为了兼容性
+            2. 为了高效（通过事件委托，委托给组件最外层元素）
+         可在事件里获得事件源，避免过度使用 ref
+        */}
+      <input
+        type="text"
+        onChange={(event) => {
+          console.log(event.target);
+        }}
+      />
+    </div>
+);
+```
+
+
+
+
+
+#### 收集表单数据
+
+* 受控组件：随着表单输入将输入同步到状态中，需要时去状态里面读取
+
+  ```jsx
+  {/*受控组件*/}
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        console.log(
+          "受控组件",
+          this.state.username,
+          this.state.password
+        );
+      }}
+    >
+      <label>
+        用户名
+        <input
+          onChange={(event) => {
+            this.setState({
+              username: event.target.value,
+            });
+          }}
+          type="text"
+        />
+      </label>
+      <label>
+        密码
+        <input
+          onChange={(event) => {
+            this.setState({
+              password: event.target.value,
+            });
+          }}
+          type="password"
+        />
+      </label>
+      <button>提交</button>
+    </form>
+  ```
+
+  
+
+* 非受控组件：用的时候去取节点再拿到节点的值
+
+  ```jsx
+  {/*非受控组件*/}
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        console.log(
+          "非受控组件",
+          this.usernameNode.value,
+          this.passwordNode.value
+        );
+      }}
+    >
+      <label>
+        用户名
+        <input
+          ref={(node) => {
+            // 回调式建议写成类函数，避免多次调用
+            console.log(node);
+            this.usernameNode = node;
+          }}
+          type="text"
+        />
+      </label>
+      <label>
+        密码
+        <input
+          ref={(node) => {
+            // 回调式建议写成类函数，避免多次调用
+            console.log(node);
+            this.passwordNode = node;
+          }}
+          type="password"
+        />
+      </label>
+      <button>提交</button>
+  </form>
+  ```
+
+  
+
+#### 高阶函数与柯里化函数
+
+**高阶函数**：如果一个函数符合下面两个规范中的任意一个，就是高阶函数
+
+* 若该函数**接收参数是一个函数**，该函数就可以称为高阶函数
+* 若该函数调用的**返回值依然是一个函数**，该函数就可以称为高阶函数
+* 常见的高阶函数：`Promise` `setTimeout` `arr.map(function(){})`
+
+**柯里化函数**：通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式
+

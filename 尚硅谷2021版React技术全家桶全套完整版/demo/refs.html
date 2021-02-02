@@ -4,50 +4,76 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>refs 的使用</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>refs 的使用</title>
-</head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
 
-<body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-
-  <!-- 如果使用 JSX 语法 type="text/babel" -->
-  <script type="text/babel">
-    class Demo extends React.Component {        
+    <!-- 如果使用 JSX 语法 type="text/babel" -->
+    <script type="text/babel">
+      class Demo extends React.Component {
         bindingFunc = (node) => {
           this.bindingFuncNode = node;
-          console.log('回调式 ref，绑定函数',this.bindingFuncNode);
-        }
+          console.log("回调式 ref，绑定函数", this.bindingFuncNode);
+        };
 
         myRef = React.createRef();
-        
-        render() {          
+
+        render() {
           return (
             <div>
-              { /* 字符串式 ref，不推荐使用 */ }
-              <input placeholder="字符串式 ref，不推荐使用" ref="strRef" type="text" onChange={()=>{console.log('字符串式 ref，不推荐使用',this.refs.strRef.value);}} />
-              { /* 内联函数 */ }
-              <input placeholder="回调式 ref，内联函数" ref={(node)=>{
-                // 内联式函数会在更新时(setState 后再次 render 的时候运行两次，第一次 node === null，第二次有值)
-                this.cbInlineNode = node;
-                console.log('回调式 ref，内联函数', this.cbInlineNode);
-              }} type="text" />
-              { /* 绑定函数 */ }
-              <input placeholder="回调式 ref，绑定函数" ref={this.bindingFunc} type="text" onChange={() => {
-                console.log(this.bindingFuncNode.value);
-              }} />
-              { /* React.createRef 返回一个容器，单独收集某一个元素，如果重复使用，则会后者居上 */ }
-              <input placeholder="回调式 ref，绑定函数" ref={this.myRef} type="text" />
-              <button onClick={() => {
-                this.setState({});
-              }}>刷新 state</button>
-              </div>
+              {/* 字符串式 ref，不推荐使用 */}
+              <input
+                placeholder="字符串式 ref，不推荐使用"
+                ref="strRef"
+                type="text"
+                onChange={() => {
+                  console.log(
+                    "字符串式 ref，不推荐使用",
+                    this.refs.strRef.value
+                  );
+                }}
+              />
+              {/* 内联函数 */}
+              <input
+                placeholder="回调式 ref，内联函数"
+                ref={(node) => {
+                  // 内联式函数会在更新时(setState 后再次 render 的时候运行两次，第一次 node === null，第二次有值)
+                  this.cbInlineNode = node;
+                  console.log("回调式 ref，内联函数", this.cbInlineNode);
+                }}
+                type="text"
+              />
+              {/* 绑定函数 */}
+              <input
+                placeholder="回调式 ref，绑定函数"
+                ref={this.bindingFunc}
+                type="text"
+                onChange={() => {
+                  console.log(this.bindingFuncNode.value);
+                }}
+              />
+              {/* React.createRef 返回一个容器，单独收集某一个元素，如果重复使用，则会后者居上 */}
+              <input
+                placeholder="回调式 ref，绑定函数"
+                ref={this.myRef}
+                type="text"
+              />
+              <button
+                onClick={() => {
+                  this.setState({});
+                }}
+              >
+                刷新 state
+              </button>
+            </div>
           );
         }
       }
@@ -59,6 +85,5 @@
         document.querySelector("#root")
       );
     </script>
-</body>
-
+  </body>
 </html>

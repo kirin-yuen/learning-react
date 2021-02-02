@@ -4,24 +4,23 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>props 的使用</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>props 的使用</title>
-</head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/prop-types/15.7.1/prop-types.js"></script>
 
-<body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/prop-types/15.7.1/prop-types.js"></script>
-
-  <!-- 如果使用 JSX 语法 type="text/babel" -->
-  <script type="text/babel">
-    class Person extends React.Component {
-        constructor(props){
+    <!-- 如果使用 JSX 语法 type="text/babel" -->
+    <script type="text/babel">
+      class Person extends React.Component {
+        constructor(props) {
           super(props); // 如果不传递 props 给 super，构造器中的 this.props 无法使用
         }
 
@@ -34,7 +33,7 @@
           name: "无名",
           age: 30,
         };
-        
+
         render() {
           return (
             <ul>
@@ -71,6 +70,5 @@
         document.querySelector("#root")
       );
     </script>
-</body>
-
+  </body>
 </html>

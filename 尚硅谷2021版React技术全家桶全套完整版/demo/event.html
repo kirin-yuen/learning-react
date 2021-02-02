@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>事件</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 事件委托 -->
+    <div id="inputGropu">
+      <label>足球 <input name="raido" type="radio" value="足球" /></label>
+      <label>篮球 <input name="raido" type="radio" value="篮球" /></label>
+      <label>排球 <input name="raido" type="radio" value="排球" /></label>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <!-- 如果使用 JSX 语法 type="text/babel" -->
+    <script type="text/babel">
+      class Demo extends React.Component {
+        render() {
+          return (
+            <div>
+              {/* React 事件为原生 html 元素重写了事件，格式为 onXxx
+                    1. 为了兼容性
+                    2. 为了高效（通过事件委托，委托给组件最外层元素）
+                 可在事件里获得事件源，避免过度使用 ref
+                */}
+              <input
+                type="text"
+                onChange={(event) => {
+                  console.log(event.target);
+                }}
+              />
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<Demo />, document.querySelector("#root"));
+    </script>
+    <script>
+      // 将事件绑定在外层容器上，避免为元素循环绑定事件
+      document.getElementById("inputGropu").onclick = function (event) {
+        // 区分外层容器
+        if (event.target.nodeName === "INPUT") {
+          console.log(event.target.value);
+        }
+      };
+    </script>
+  </body>
+</html>
