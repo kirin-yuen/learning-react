@@ -536,8 +536,43 @@ return (
 **高阶函数**：如果一个函数符合下面两个规范中的任意一个，就是高阶函数
 
 * 若该函数**接收参数是一个函数**，该函数就可以称为高阶函数
+
+  ```js
+  const arr = [1, 2, 3, 4, 5]
+  arr.map(item => item + 2)
+  ```
+
 * 若该函数调用的**返回值依然是一个函数**，该函数就可以称为高阶函数
+
+  ```js
+  function check(value) {
+      return function () {
+          return checkBefore(value)
+      }
+  }
+  
+  function checkBefore(value) {
+      return value > 60 ? '及格' : '不及格'
+  }
+  
+  console.log(check(60)());
+  ```
+
 * 常见的高阶函数：`Promise` `setTimeout` `arr.map(function(){})`
 
 **柯里化函数**：通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式
+
+```js
+function sum(a) {
+    return function (b) {
+        return function (c) {
+            return a + b + c
+        }
+    }
+}
+
+console.log(sum(1)(2)(3));
+```
+
+
 

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>表单</title>
+    <title>受控组件与非受控组件</title>
   </head>
   <body>
     <div id="root"></div>
@@ -22,7 +22,7 @@
         render() {
           return (
             <div>
-              {/*非受控组件*/}
+              {/*非受控组件：随着表单输入将输入同步到状态中，需要时去状态里面读取*/}
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
@@ -60,7 +60,7 @@
               <br />
               <br />
               <br />
-              {/*受控组件*/}
+              {/*受控组件：用的时候去取节点再拿到节点的值*/}
               <form
                 onSubmit={(event) => {
                   event.preventDefault();

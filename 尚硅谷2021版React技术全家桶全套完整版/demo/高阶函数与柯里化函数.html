@@ -1,0 +1,47 @@
+<!--
+ * @Author: ywl
+ * @LastEditors: ywl
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高阶函数与柯里化函数</title>
+</head>
+
+<body>
+    <script>
+        const arr = [1, 2, 3, 4, 5]
+        // 高阶函数
+        // 1.若该函数接收参数是一个函数，该函数就可以称为高阶函数
+        arr.map(item => item + 2)
+        // 2.若该函数调用的返回值依然是一个函数，该函数就可以称为高阶函数
+        function check(value) {
+            return function () {
+                return checkBefore(value)
+            }
+        }
+
+        function checkBefore(value) {
+            return value > 60 ? '及格' : '不及格'
+        }
+
+        console.log(check(60)());
+
+        // 柯里化函数
+        // 若该函数调用的**返回值依然是一个函数**，该函数就可以称为高阶函数
+        function sum(a) {
+            return function (b) {
+                return function (c) {
+                    return a + b + c
+                }
+            }
+        }
+
+        console.log(sum(1)(2)(3));
+    </script>
+</body>
+
+</html>
