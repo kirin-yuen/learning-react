@@ -576,3 +576,61 @@ console.log(sum(1)(2)(3));
 
 
 
+#### 组件生命周期
+
+* 组件从创建到死亡会经历一些**特定阶段**
+* React 组件中包含一系列钩子函数(生命周期回调函数)，会在特定的时刻调用
+* 我们定义组件时，可在特定的生命周期回调函数进行业务处理
+
+```jsx
+const root = document.querySelector("#root")
+    
+class Life extends React.Component{
+  state = {
+    opacity:1
+  }
+
+  // 生命周期回调函数 === 生命周期钩子函数 === 生命周期函数
+  // 组件将要被卸载
+  componentWillUnmount(){
+    console.log('componentWillUnmount');
+    clearInterval(this.timer);
+  }
+
+  // 组件挂载完毕，只执行 1 次
+  componentDidMount(){
+    console.log('componentDidMount');
+    this.timer = setInterval(() => {
+      let {opacity} = this.state
+      opacity-=0.1
+      if(opacity<=0) opacity=1;
+      this.setState({
+        opacity
+      })
+    }, 200);
+
+  }
+
+  death = ()=>{
+    // 卸载组件
+    ReactDOM.unmountComponentAtNode(root)
+  }
+
+  // render 调用时机：初始化渲染、状态更新之后执行 1 + n
+  render(){
+    console.log('render');
+    return (
+      <div>
+        <h2 style={{
+          opacity: this.state.opacity
+        }}>
+          React 学不会怎么办
+        </h2>
+        <button onClick={this.death}>不活了</button>
+      </div>
+    )
+  }
+}
+ReactDOM.render(<Life/>, root);
+```
+
