@@ -634,3 +634,6 @@ class Life extends React.Component{
 ReactDOM.render(<Life/>, root);
 ```
 
+##### 各个生命周期钩子函数
+
+![1](.\note-img\2.png)
