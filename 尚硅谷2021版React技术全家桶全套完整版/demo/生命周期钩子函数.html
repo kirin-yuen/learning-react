@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生命周期钩子函数</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <script type="text/babel">
+      const root = document.querySelector("#root");
+      
+      class Life extends React.Component {
+        constructor(props) {
+          super(props);
+          console.log("1 --- constructor");
+        }
+
+        stateSwitch = null;
+
+        state = {
+          count: 0,
+        };
+
+        add = () => {
+          this.setState({
+            count: ++this.state.count,
+          });
+        };
+
+        updateState = (event) => {
+          const { target } = event;
+
+          if (target.nodeName === "INPUT") {
+            this.stateSwitch = Boolean(target.value);
+          }
+        };
+
+        componentWillMount() {
+          console.log("2 --- componentWillMount");
+        }
+
+        componentDidMount() {
+          console.log("4 --- componentDidMount");
+        }
+
+        componentWillUnmount() {
+          console.log(
+            "调用 ReactDOM.unmountComponentAtNode() 后 --- componentWillUnmount"
+          );
+        }
+
+        componentWillUpdate() {
+          console.log("调用 setState 后 1 --- componentWillUpdate");
+        }
+
+        componentDidUpdate() {
+          console.log("调用 setState 后 2 --- componentDidUpdate");
+        }
+
+        shouldComponentUpdate() {
+          // 返回 true，走 componentWillUpdate => render => componentDidUpdate
+          // 返回 false，停止，视图不更新，但当下次更新时，之前的状态会补上
+          console.log(
+            "setState 后 --- shouldComponentUpdate",
+            this.stateSwitch
+          );
+          return this.stateSwitch;
+        }
+
+        render() {
+          console.log("3 --- render");
+
+          return (
+            <div>
+              计数器:{this.state.count}
+              <button onClick={this.add}>+</button>
+              <div onClick={this.updateState}>
+                <h4>是否让组件更新</h4>
+                <label>
+                  是<input value="1" type="radio" name="update-state" />
+                </label>
+                <label>
+                  否<input value="" type="radio" name="update-state" />
+                </label>
+              </div>
+              <button
+                onClick={() => {
+                  // 强制刷新视图
+                  this.forceUpdate();
+                }}
+              >
+                forceUpdate 强制更新
+              </button>
+              <button
+                onClick={() => {
+                  // 强制刷新视图
+                  ReactDOM.unmountComponentAtNode(root);
+                }}
+              >
+                卸载组件
+              </button>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<Life />, root);
+    </script>
+  </body>
+</html>

@@ -380,7 +380,7 @@ ReactDOM.render(<Demo />, document.querySelector("#root"));
   <input placeholder="字符串式 ref，不推荐使用" ref="strRef" type="text" onChange={()=>{console.log('字符串式 ref，不推荐使用',this.refs.strRef.value);}} />
     ```
   
-  * 回调式 ref，**内联函数**
+  * 回调式 ref，**内联函数** 在更新时(setState 后再次 render 的时候运行两次
   
     ```jsx
     { /* 内联函数 */ }
@@ -637,3 +637,86 @@ ReactDOM.render(<Life/>, root);
 ##### 各个生命周期钩子函数
 
 ![1](.\note-img\2.png)
+
+##### 单独一个组件的生命周期
+
+* constructor 类构造器
+* componentWillMount 组件将要挂载
+* render 组件进行计算渲染
+* componentDidMount 组件计算渲染后进行挂载
+* 使用 **setState 更改状态**
+  * 执行 shouldComponentUpdate 回调函数，**该函数决定视图是否更新**，不写则**默认返回 true**
+    * 返回 true，走 componentWillUpdate => render => componentDidUpdate
+    * 返回 false，停止，视图不更新，但当下次更新时，之前的状态会补上
+* 使用 **this.forceUpdate 强制更新视图**
+  * 跳过 shouldComponentUpdate 回调函数（无论是否返回 true）
+  * 走 componentWillUpdate => render => componentDidUpdate
+
+
+
+##### 父子组件生命周期
+
+* 【父组件】 constructor 类构造器
+* 【父组件】componentWillMount 组件将要挂载
+* 【父组件】render 组件进行计算渲染
+* 【子组件】 constructor 类构造器
+* 【子组件】 componentWillMount 组件将要挂载
+* 【子组件】render 组件进行计算渲染
+* 【子组件】componentDidMount 组件计算渲染后进行挂载
+* 【父组件】componentDidMount 组件计算渲染后进行挂载
+
+
+
+##### 父组件使用 setState 
+
+执行父组件 shouldComponentUpdate 回调函数，**该函数决定视图是否更新**，不写则**默认返回 true**
+
+* 返回 true
+  * 【父组件】componentWillUpdate 
+  * 【父组件】render
+  * 【子组件】componentWillReceiveProps
+  * 【子组件】shouldComponentUpdate 
+    * 如果**子组件 shouldComponentUpdate 返回 false，则子组件之后的生命周期都不会走**
+  * 【子组件】componentWillUpdate 
+  * 【子组件】render 
+  * 【子组件】componentDidUpdate
+  * 【父组件】componentDidUpdate
+* 返回 false，停止，视图不更新，**子组件对应的生命周期也不会执行**
+
+
+
+实际就三个阶段：
+
+* 初始化阶段
+* 更新阶段
+* 卸载组件
+
+
+
+##### React 17.x 新版本
+
+* 针对 `componentWillUpdate ` `componentWillMount ` `componentWillMount ` 需要增加 `UNSAVE_` 前缀，原因是**预计未来设计的异步渲染会引起 bug**
+
+  ![1](.\note-img\3.png)
+
+![1](.\note-img\4.png)
+
+![1](.\note-img\5.png)
+
+
+
+#### React DOM diffing 算法
+
+* 如果用数组的 index 索引作为 key 的唯一标识，以下场景都会出现问题
+  * 逆序增加删除等破坏顺序操作的
+  * 带输入类 DOM
+* 建议使用唯一标识作为 key 值
+
+![1](.\note-img\6.png)
+
+
+
+#### React 应用基于 React 脚手架
+
+![1](.\note-img\7.png)
+
