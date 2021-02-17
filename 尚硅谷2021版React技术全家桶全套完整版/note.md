@@ -720,3 +720,169 @@ ReactDOM.render(<Life/>, root);
 
 ![1](.\note-img\7.png)
 
+
+
+#### css 样式模块化
+
+* 样式文件改名添加 `modules` ，如 `index.modules.css`
+
+  ```css
+  /* index.modules.css */
+  .title{...}
+  ```
+
+  
+
+* 组件文件
+
+  ```jsx
+  // Hello.js
+  import Hello from './index.modules.css'
+  ...
+  return (<div className={Hello.title}></div>)
+  ```
+
+  
+
+#### 提高 react 编码效率插件
+
+`ES7 React/Redux/GraphQL/React-Native snippets`
+
+* 输入`rcc` 点 tab 直接输入类式组件
+
+* 输入`rfc` 点 tab 直接输入函数式组件
+
+
+
+#### 功能界面的组件化编码流程（通用）
+
+* **拆分组件**：拆分界面，抽取组件
+* **实现静态组件**：使用组件实现静态页面效果
+* **实现动态组件**：
+  * 动态显示初始化数据
+    * 数据类型
+    * 数据名称
+    * 保存在那个组件
+      * 仅**某个组件使用**，放在**自身的 state** 里
+      * **某些组件都要使用**：放在他们给**共同的父组件里(状态提升)**
+  * 交互(从绑定事件监听开始)
+
+* **父子组件之间通讯**：
+  * 父传子：**props**
+  * 子传父：要求父**传一个函数**給子，子在合适的时机调用该函数
+
+* **状态在哪，操作状态的方法就在哪**
+
+
+
+
+
+#### chrome 插件
+
+* FeHelper，json 格式化排序等
+
+
+
+#### react脚手架配置代理总结
+
+##### 方法一
+
+> 在 package.json 中追加如下配置
+
+```json
+"proxy":"http://localhost:5000"
+```
+
+说明：
+
+1. 优点：配置简单，前端请求资源时可以**不加任何前缀**。
+2. 缺点：不能配置多个代理。
+3. 工作方式：上述方式配置代理，当请求了3000不存在的资源时，那么该请求会转发给5000 （优先匹配3000端口前端资源）
+
+
+
+##### 方法二
+
+1. 第一步：创建代理配置文件
+
+   > 在src下创建配置文件：**src/setupProxy.js** 路径文件名固定
+
+2. 编写 setupProxy.js (webpack 使用的 cmd 模式)配置具体代理规则：
+
+   ```js
+   const proxy = require('http-proxy-middleware')
+   
+   module.exports = function(app) {
+     app.use(
+       proxy('/api1', {  //api1是需要转发的请求(所有带有/api1前缀的请求都会转发给target)
+         target: 'http://localhost:5000', //配置转发目标地址(能返回数据的服务器地址)
+         changeOrigin: true, //控制服务器接收到的请求头中host字段的值，即修改请求源
+         /*
+         	changeOrigin设置为true时，服务器收到的请求头中的host为：localhost:5000
+         	changeOrigin设置为false时，服务器收到的请求头中的host为：localhost:3000
+         	changeOrigin默认值为false，但我们一般将changeOrigin值设为true
+         */
+         pathRewrite: {'^/api1': ''} //去除请求前缀，保证交给后台服务器的是正常请求地址(必须配置)
+       }),
+       proxy('/api2', { 
+         target: 'http://localhost:5001',
+         changeOrigin: true,
+         pathRewrite: {'^/api2': ''}
+       })
+     )
+   }
+   ```
+
+说明：
+
+1. 优点：可以**配置多个代理**，可以灵活的控制请求是否走代理。
+2. 缺点：配置繁琐，前端请求资源时必须加前缀。
+
+
+
+![1](.\note-img\8.png)
+
+* 客户端发送经过 ajax 引擎，ajax 引擎可以发送请求到服务器，但回来的响应因同源策略被拒绝
+
+* 开启中间代理服务器的端口也是3000，代理转发请求给 5000 端口的服务器，**中间服务器没有 ajax 引擎因此不会被 ajax引擎拒绝**
+
+
+
+
+
+#### 消息订阅——发布机制
+
+跨任意层级组件通讯使用
+
+* 工具库 PubSubJS
+
+* 使用：
+
+  ```js
+  let token = Pubsub.subscribe('消息名', function(msg, data){}); // 订阅消息
+  Pubsub.unsubscribe(token); // 取消订阅
+  Pubsub.publish('消息名',data); // 发布消息
+  ```
+
+
+
+#### 扩展 Fetch 
+
+* window.fetch 新版本浏览器自带，不需要像 axios/jquery 这些额外下载
+
+* 跟 xhr 平级，开发者工具 network 面板 xhr and fetch 都能看到
+
+* **关注分离**：分多个步骤处理
+
+  ```js
+  fetch(url).then(
+      response=>{return response.json()}, // 第一步：服务器连接成功，返回一个 promise
+      error=>{return new Promise(function(){})} // 服务器连接失败，返回一个空的 promise 处理
+  ).then(
+      data=>{console.log(data)}, // 第二步：获取数据
+      error=>{console.log(error)} // 输出错误
+  )
+  // 也可使用 async await 方法些，错误用 try catch 捕获
+  ```
+
+  
