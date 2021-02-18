@@ -720,3 +720,27 @@ ReactDOM.render(<Life/>, root);
 
 ![1](.\note-img\7.png)
 
+
+
+#### 脚手架文件系统
+
+* reportWebVitals.js 用于记录页面性能
+* App.js 入口组件
+
+```jsx
+<React.StrictMode><App/></React.StrictMode> 严格模式
+```
+
+* index.js 入口 js
+
+* 自定义的组件
+
+  * 后缀名可以通过 `.jsx` 进行区分
+
+  * 文件名如果带有文件夹的情况下 Hello/index.jsx，import 时只用写到 `Hello`
+
+    ```js
+    import Hello from './component/Hello'
+    ```
+
+    
