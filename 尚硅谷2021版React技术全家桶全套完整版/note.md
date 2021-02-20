@@ -1184,4 +1184,6 @@ this.props.children // 可以获取 Home
     export default createStore(countReducer,applyMiddleware(thunk));
     ```
 
-    异步 action 不是必须要用的
+  * 异步 action 不是必须要用的
+  
+
