@@ -716,13 +716,16 @@ ReactDOM.render(<Life/>, root);
 
 
 
-#### React 应用基于 React 脚手架
+
+
+### React 应用基于 React 脚手架
+
+---
 
 ![1](.\note-img\7.png)
 
 
 
-<<<<<<< HEAD
 #### 脚手架文件系统
 
 * reportWebVitals.js 用于记录页面性能
@@ -745,7 +748,6 @@ ReactDOM.render(<Life/>, root);
     ```
 
     
-=======
 #### css 样式模块化
 
 * 样式文件改名添加 `modules` ，如 `index.modules.css`
@@ -910,4 +912,276 @@ ReactDOM.render(<Life/>, root);
   ```
 
   
->>>>>>> 23f05909cc4130ce754621d94dde9b14a78f178f
+
+### React 路由
+
+---
+
+#### SPA理解
+
+* 单页面多组件应用，SPA
+* 整个应用只有一个完整的页面
+* 点击页面中的链接不会刷新页面，只会做页面**局部刷新**
+* 数据都需要通过 ajax 请求获取，并在前端异步展现
+
+
+
+#### 路由理解
+
+* 什么是路由
+  * 路由就是映射关系(key:value)
+  * key => 路径
+  * value => function(后端路由) 或 component(前端路由)
+* 路由器(router)管理各个路由(route)
+
+
+
+#### 路由原理
+
+依靠 BOM 的 history 进行 path 匹配，然后返回映射的组件
+
+
+
+#### react-router-dom
+
+* react 插件库，专门用来实现 SPA
+
+* 路由组件尽量写在 `pages` 文件夹下面
+
+* **路由组件 this.props 会收到路由器传递的参数**（history location 等）
+
+* 使用频率高的组件
+
+  ```jsx
+  import { NavLink, BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+  ```
+
+  * NavLink: 导航链接，带选中状态，选中导航自动添加 active
+  * Route: 路由 path 和 component 键值对表示映射关系
+  * BrowserRouter: 路由器，放在最外层进行管理
+  * 单一匹配： 包裹在 Switch 里的 route，相同 path 的只会匹配一个；如果不包裹则全部都会匹配
+
+  ```jsx
+  <switch>
+    	{/* 注册路由  */}  
+      <Route path="/home" component={Home}></Route>
+      <Route path="/about" component={About}></Route> {/* 只会匹配前者 */}
+      <Route path="/about" component={Test}></Route>
+  </switch>
+  ```
+
+  * Redirect 是 Route 都匹配不上则进行转向（类似于 switch 的 default)
+
+    ```jsx
+    <Route path="/home" component={Home}></Route>
+    <Route path="/about" component={About}></Route>
+    <Redirect to="/home" />
+    ```
+
+    
+
+* 路由精准匹配与模糊匹配
+
+  * 默认模糊匹配
+
+  * 精准匹配`exact`，不要随便开启，开启会导致无法继续匹配二级路由
+
+    ```jsx
+    <Route exact path="/home" component={Home}></Route>
+    ```
+
+* 路由组件参数
+
+  * 通过 **params 形式**传递接收参数，地址栏**有参数**
+
+  ```jsx
+  <NavLink to="/about/news/007/hello world">News</NavLink> {/* 路由连接：携带参数 */}
+  
+  <Route path="/about/news/:id/:title" component={News} /> {/* 注册路由：声明接收参数 */}
+  {/* News 组件里 props 能接收到 params */}
+  console.log(this.props.match.params);
+  ```
+
+  * 通过 **params 形式**传递接收参数，地址栏**有参数**
+
+  ```jsx
+  <NavLink to="/about/message?id=007&title=hello react">Message</NavLink>
+  <Route path="/about/message" component={Message} /> 
+  {/* News 组件里 props 能接收到 params */}
+  console.log(this.props.location.search); // search 是一个 urlencode 的值，可使用 querystring 库进行解析
+  ```
+
+  * 通过 **state 形式**传递接收参数，地址栏**无参数**
+
+    **state 的数据会被 BrowserRouter 进行维护，因此刷新也不会丢失数据**
+
+  ```jsx
+  <NavLink to={{path:'/about/message', state={{id:"007"}}}}>Message</NavLink>
+  <Route path="/about/message" component={Message} /> 
+  {/* News 组件里 props 能接收到 params */}
+  console.log(this.props.location.state);
+  ```
+
+* 路由 replace 与 push
+
+  * 可以将历史记录看做栈结构
+  * 默认是 push，将路由记录压栈
+  * `<Link />`上添加 **replace**  可以改为替换，则不会记录路由
+
+* **编程式路由导航**
+
+  借助 history api 进行路由操作
+
+  ```jsx
+  this.props.history.replace(path, state)
+  this.props.history.push(path, state)
+  this.props.history.go(n)
+  this.props.history.goForward()
+  this.props.history.goBack()
+  ```
+
+* **withRouter**
+
+  一般组件包裹 **withRouter**，让一般组件带有路由组件持有的 API
+
+  ```jsx
+  import {withRouter} from 'react-router-dom'
+  export default withRouter(一般组件)
+  ```
+
+* BrowserRouter 与 HashRouter 区别
+
+  * 底层原理不一样：
+    * BrowserRouter 使用的是  H5 的 history API，不兼容 IE9 及以下版本
+    * HashRouter 使用的是 URL 哈希值
+  * path 表现形式不一样
+    * BrowserRouter 的路径没有 #
+    * HashRouter  的路径有 #
+  * 刷新后对路由 state 参数的影响
+    * BrowserRouter 没有任何影响，因 state 保存在 history 对象中
+    * HashRouter  刷新后会导致路由 state 参数丢失
+  * HashRouter  可以解决一些路径错误的问题
+
+#### 标签体
+
+```jsx
+<NavLink>Home</NavLink> // 第一种写法
+<NavLink children="Home" /> // 第二种写法
+
+this.props.children // 可以获取 Home
+```
+
+
+
+
+
+### redux
+
+---
+
+#### redux 是什么
+
+* 专门管理状态的 js 库，不是 react 专门使用，可用在 vue angular 中，但和 react 配合更多
+* **作用：**集中管理 react 应用中**多个组件状态**
+
+![1](.\note-img\9.png)
+
+#### 什么情况下需要使用 redux
+
+* 某个组件状态，需要让其他组件可以随时拿到(共享)
+* 一个组件需要改变另一个组件状态(通信)
+* 总体原则：能不用就不用，如果不用比较吃力才考虑使用
+
+
+
+![1](.\note-img\10.png)
+
+#### 第一个 redux
+
+* **创建核心 store**
+
+  ```jsx
+  // redux/store.js
+  // 创建 redux 中的 store 对象
+  import { createStore } from "redux";
+  import countReducer from "./count_reducer";
+  
+  export default createStore(countReducer);
+  ```
+
+* store 所需的 **reducer**
+
+  ```jsx
+  // redux/reducer.js
+  // 初始化数据
+  const initState = 0;
+  
+  // reducer 本质就是函数
+  export default function (prevState = initState, action) {
+    // 初始化 prevState 会传 undefined, action => {type: "@@redux/INITxxxxx"}
+    console.log(prevState, action);
+    const { type, data } = action;
+  
+    switch (type) {
+      case "increment":
+        return prevState + data;
+      case "decrement":
+        return prevState - data;
+      // 初始化时候 type 没有匹配，才会出现走 default
+      default:
+        return prevState;
+    }
+  }
+  ```
+
+* 组件引入 store，在业务逻辑处**进行 dispatch action**
+
+  ```jsx
+  import store from "./redux/store";
+  
+  // 业务逻辑处理
+  store.dispatch({
+      type: "increment",
+      data: yourData,
+  });
+  
+  store.getState(); // 获取 store 中，保存的 state
+  ```
+
+* dispatch 后 store 中的 state 会更新，但视图并没有更新，**需要触发 render**
+  * 在 dispatch 后加 this.setState({})
+  * 在 componentDidMount 里 `store.subscribe(()=>{this.setState({})});`
+  * 在入口文件 index.js 重新 render，`store.subscribe(()=>{ReactDom.render(...)});`**(推荐)**
+
+* 创建 actionCreator
+
+  ```jsx
+  // redux/count_reducer.js
+  const createIncrementAction = (data) => ({ type: "increment", data });
+  
+  const createDecrementAction = (data) => ({ type: "decrement", data });
+  
+  export { createIncrementAction, createDecrementAction };
+  
+  // 组件使用
+  store.dispatch(createIncrementAction(data));
+  ```
+
+  
+
+#### 同步/异步 action
+
+* 一般对象`{type:'xxx', data: 'xxx'}`**同步 action** 
+
+* 函数则为**异步 action**
+
+  * store 需要使用中间件 `redux-thunk`
+
+    ```jsx
+    import {applyMiddleware} from 'redux'
+    import thunk from 'redux-thunk'
+    
+    export default createStore(countReducer,applyMiddleware(thunk));
+    ```
+
+    异步 action 不是必须要用的
