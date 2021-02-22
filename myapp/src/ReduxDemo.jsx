@@ -4,6 +4,7 @@ import store from "./redux/store";
 import {
   createIncrementAction,
   createDecrementAction,
+  createAsyncDecrementAction,
 } from "./redux/count_action";
 
 export default class ReduxDemo extends Component {
@@ -38,9 +39,8 @@ export default class ReduxDemo extends Component {
   incrementIfAysnc = () => {
     const { selectCount } = this.state;
 
-    window.setTimeout(() => {
-      store.dispatch(createIncrementAction(selectCount));
-    }, 1000);
+    // 异步 action
+    store.dispatch(createAsyncDecrementAction(selectCount));
   };
 
   render() {

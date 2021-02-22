@@ -1156,7 +1156,7 @@ this.props.children // 可以获取 Home
 * 创建 actionCreator
 
   ```jsx
-  // redux/count_reducer.js
+  // redux/count_action.js
   const createIncrementAction = (data) => ({ type: "increment", data });
   
   const createDecrementAction = (data) => ({ type: "decrement", data });
@@ -1178,12 +1178,35 @@ this.props.children // 可以获取 Home
   * store 需要使用中间件 `redux-thunk`
 
     ```jsx
+    // redux/store.js
     import {applyMiddleware} from 'redux'
     import thunk from 'redux-thunk'
     
     export default createStore(countReducer,applyMiddleware(thunk));
-    ```
 
+    // redux/count_action.js
+    // 异步 action 需要返回一个函数
+    const createAsyncDecrementAction = (data) => {
+      return (dispatch) => {
+        window.setTimeout(() => {
+          dispatch(createIncrementAction(data));
+        }, 500);
+      };
+    };
+    
+    // 组件
+    // 异步 action
+    store.dispatch(createAsyncDecrementAction(selectCount));
+    ```
+    
   * 异步 action 不是必须要用的
   
+
+
+
+#### react-redux
+
+react 针对 redux 推出的库
+
+![1](.\note-img\11.png)
 
