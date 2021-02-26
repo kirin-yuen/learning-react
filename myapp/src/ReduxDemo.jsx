@@ -12,6 +12,13 @@ export default class ReduxDemo extends Component {
     selectCount: 1,
   };
 
+  componentDidMount(){
+    // 仅当前 component 订阅 store 状态变化
+    store.subscribe(() => {
+      this.setState({})
+    })
+  }
+
   onSelectChange = (event) => {
     this.setState({
       selectCount: +event.target.value,

@@ -1210,3 +1210,225 @@ react 针对 redux 推出的库
 
 ![1](.\note-img\11.png)
 
+* 容器组件可放在 `containers` 目录下
+
+  **mapDispatchToProps** 有两种写法
+
+  * 函数
+  * 对象(简写方式)
+
+  ```jsx
+  // container/Count.jsx
+  // UI 组件
+  import CountUI from "../../components/Count";
+  import { connect } from "react-redux";
+  import {
+    createIncrementAction,
+    createDecrementAction,
+    createAsyncIncrementAction,
+  } from "../../react-redux/count_action";
+  
+  // 将 state 映射成 props 给子组件
+  const mapStateToProps = (state) => {
+    return {
+      count: state,
+    };
+  };
+  
+  // 第一种：将操作状态的方法映射成 props 给子组件
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      increment: (data) => {
+        dispatch(createIncrementAction(data));
+      },
+      decrement: (data) => {
+        dispatch(createDecrementAction(data));
+      },
+      asyncIncrement: (data) => {
+        dispatch(createAsyncIncrementAction(data));
+      },
+    };
+  };
+  
+  // 第二种是第一种的简写方式，直接返回对象，react-redux 会自动帮你 dispatch 这个 action
+  const mapDispatchToProps2 = () => ({
+    increment: createIncrementAction,
+    decrement: createDecrementAction,
+    asyncIncrement: createAsyncIncrementAction,
+  });
+  
+  // 容器组件连接 UI 组件
+  // 第一种：第二个参数是函数
+  // export default connect(mapStateToProps, mapDispatchToProps())(CountUI);
+  // 第二种：第二个参数是对象
+  export default connect(mapStateToProps, mapDispatchToProps2())(CountUI);
+  
+  ```
+
+  
+
+* UI 组件可放在 `components`目录下
+
+  使用 react-redux 不需要再从 store 里面进行操作，而是由父组件**将 store 相关状态与方法映射到 props 里**
+
+  ```jsx
+  import React, { Component } from "react";
+  
+  export default class Count extends Component {
+    state = {
+      selectCount: 1,
+    };
+  
+    onSelectChange = (event) => {
+      this.setState({
+        selectCount: +event.target.value,
+      });
+    };
+  
+    increment = () => {
+      const { selectCount } = this.state;
+      
+      // 操作状态的方法从 props 获取
+      this.props.increment(selectCount);
+    };
+  
+    decrement = () => {
+      const { selectCount } = this.state;
+      
+      // 操作状态的方法从 props 获取
+      this.props.decrement(selectCount);
+    };
+  
+    incrementIfOdd = () => {
+      const { selectCount } = this.state;
+      if (this.props.count % 2) {
+          
+          // 操作状态的方法从 props 获取
+        this.props.increment(selectCount);
+      }
+    };
+  
+    incrementIfAysnc = () => {
+      const { selectCount } = this.state;
+      
+      // 异步 action
+      // 操作状态的方法从 props 获取
+      this.props.asyncIncrement(selectCount);
+    };
+  
+    render() {
+      return (
+        <div>
+          {/* 状态从 props 获取 */}
+          <h1>当前求和： {this.props.count} </h1>
+          <select value={this.selectCount} onChange={this.onSelectChange}>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <button onClick={this.increment}>+</button>
+          <button onClick={this.decrement}>-</button>
+          <button onClick={this.incrementIfOdd}>当前求和为奇数再加</button>
+          <button onClick={this.incrementIfAysnc}>异步+</button>
+        </div>
+      );
+    }
+  }
+  ```
+
+  
+
+  ![1](.\note-img\12.png)
+
+* Provider 组件，可以给所有的容器组件注入 store
+
+  ```jsx
+  // 加入 Provider 后
+  <Provider store={store}>
+      <App />
+  </Provider>
+  
+  // 无需每个组件都注入 store
+  <Demo1 store={store} />
+  <Demo2 store={store} />
+  <Demo3 store={store} />
+  
+  // 只需直接写
+  <Demo1 />
+  <Demo2 />
+  <Demo3 />
+  ```
+
+* 容器组件和 UI 组件可以合并为一个组件进行优化
+
+* 各组件间**数据共享**需要使用 `combineReduces`将 `reducer` 合并
+
+  ```jsx
+  import { combineReducers, createStore } from "redux";
+  import sum from "./reducers/sum";
+  import person from "./reducers/person";
+  
+  const finalReducer = combineReducers({
+    sum,
+    person,
+  });
+  
+  export default createStore(finalReducer);
+  ```
+
+  
+
+### 补充扩展
+
+---
+
+#### setState 的两种写法
+
+第二个参数均是可选的回调方法**(更新状态后执行)**
+
+* 对象式 setState
+
+  ```js
+  this.setState({
+      count: this.state.count + 1
+  })
+  ```
+
+* 函数式 setState
+
+  ```js
+  this.setState((state, props)=>{
+      return {
+          count: state.count +1
+      }
+  })
+  ```
+
+
+
+#### 路由组件懒加载
+
+```jsx
+import React, { Component, lazy, Suspense } from "react";
+import { BrowserRouter, NavLink, Route } from "react-router-dom";
+
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+
+export default class LazyLoadRouter extends Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <NavLink to="/home">home</NavLink>
+        <NavLink to="/about">about</NavLink>
+
+        <Suspense fallback={<h2>Loading...</h2>}>
+            <Route path="/home" component={Home} />
+            <Route path="/about" component={About} />
+        </Suspense>
+      </BrowserRouter>
+    );
+  }
+}
+```
+
